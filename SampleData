@@ -4,7 +4,7 @@
         "name":"lenovo"
     },
     "price":30490000,
-    "type":"office",
+    "type":"gaming",
     "screen":{
             "screenSize":15.6,
             "resolution":"Hd",
