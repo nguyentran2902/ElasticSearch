@@ -17,7 +17,7 @@
             "speed":"3200GHz"
     },
     "ram":{
-            "memory":"15Gb",
+            "memory":"16Gb",
             "type":"DDR4"
     },
     "rom":{
