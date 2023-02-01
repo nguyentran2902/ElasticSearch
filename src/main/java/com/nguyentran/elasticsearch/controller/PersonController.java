@@ -48,28 +48,28 @@ public class PersonController {
 	}
 	
 	//find by Id
-	@GetMapping("/findById/{id}")
-	public ResponseEntity<?> findById(@PathVariable String id) {
-		HashMap<String, Object> map = new HashMap<>();
-		
-		try {
-			Person person = personService.findById(id);
-			if(person==null) {
-				map.put("status", true);
-				map.put("data", "no content");
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(map);
-			}
-			map.put("status", true);
-			map.put("data", person);
-			return ResponseEntity.ok(map);
-			
-		} catch (Exception e) {
-			map.put("status", false);
-			map.put("data", e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-		}
-		
-	}
+//	@GetMapping("/findById/{id}")
+//	public ResponseEntity<?> findById(@PathVariable String id) {
+//		HashMap<String, Object> map = new HashMap<>();
+//		
+//		try {
+//			Person person = personService.findById(id);
+//			if(person==null) {
+//				map.put("status", true);
+//				map.put("data", "no content");
+//				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(map);
+//			}
+//			map.put("status", true);
+//			map.put("data", person);
+//			return ResponseEntity.ok(map);
+//			
+//		} catch (Exception e) {
+//			map.put("status", false);
+//			map.put("data", e.getMessage());
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+//		}
+//		
+//	}
 
 	//create
 	@PostMapping("/create")
