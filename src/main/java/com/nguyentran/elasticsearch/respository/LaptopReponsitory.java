@@ -22,7 +22,6 @@ import com.nguyentran.elasticsearch.entity.Laptop;
 public class LaptopReponsitory {
 
 	private static final String LAPTOP_INDEX = "laptop";
-
 	@Autowired
 	private ElasticsearchOperations elasticsearchOperations;
 
@@ -44,8 +43,8 @@ public class LaptopReponsitory {
 
 	// search multi field
 	public List<Laptop> searchLaptop(Integer pageNum, Integer pageSize, String query) {
-//		QueryBuilder queryBuilder = QueryBuilders
-//				.matchQuery("type", type).fuzziness(Fuzziness.TWO);
+		//QueryBuilder queryBuilder = QueryBuilders
+		//		.matchQuery("type", type).fuzziness(Fuzziness.TWO);
 		QueryBuilder queryBuilder = QueryBuilders
 				// search multi field
 				.multiMatchQuery(query, "category.name", "type", "name", "system")
@@ -55,8 +54,8 @@ public class LaptopReponsitory {
 		Query searchQuery = new NativeSearchQueryBuilder().withQuery(queryBuilder)
 				.withPageable(PageRequest.of(pageNum, pageSize)).build();
 
-		SearchHits<Laptop> productHits = elasticsearchOperations.search(searchQuery, Laptop.class,
-				IndexCoordinates.of(LAPTOP_INDEX));
+		SearchHits<Laptop> productHits = elasticsearchOperations.search(
+				searchQuery, Laptop.class,IndexCoordinates.of(LAPTOP_INDEX));
 
 		List<Laptop> laptops = new ArrayList<>();
 		productHits.forEach(lap -> {
@@ -69,7 +68,7 @@ public class LaptopReponsitory {
 	// filter
 	public List<Laptop> filter(Integer pageNum, Integer pageSize, String[] type, Integer[] price, String[] category,
 			String[] screenSize, String[] cpu, String[] ram, String[] rom) {
-		
+
 		// Tạo string Query (nếu ko filter nào chọn thì mặc định get all)
 		// Kết hợp các filter nên sử dụng AND ~ must
 		String stringQuery = "{\"bool\":{\"must\":[{\"match_all\":{}}";
@@ -80,31 +79,31 @@ public class LaptopReponsitory {
 		if (type != null)
 			stringQuery += ",{\"match\":{\"type\": \"" + MyString(type) + "\"}}";
 		if (category != null)
-			stringQuery += ",{\"match\":{\"category.name\": \"" + MyString(category) + "\" }}";
+			stringQuery += ",{\"match\":{\"category.name\":\""+MyString(category)+"\"}}";
 		if (cpu != null)
 			stringQuery += ",{\"match\":{\"cpu.name\": \"" + MyString(cpu) + "\" }}";
 		if (ram != null)
 			stringQuery += ",{\"match\":{\"ram.memory\": \"" + MyString(ram) + "\" }}";
 		if (rom != null)
 			stringQuery += ",{\"match\":{\"rom.memory\": \"" + MyString(rom) + "\" }}";
-		
 
 //		Lọc giá theo các khoảng đã định trc
-//		Có thể lọc theo nhiều khoảng giá nên sử dụng OR ~ should
+//		Có thể lọc theo nhiều khoảng giá nên sử dụng should (OR) kèm trong must (AND)
 //		price==1 ~ <10000000
 //		price==2 ~ 10000000~20000000
 //		price==3 ~ 20000000~30000000
 //		price==4 ~ >30000000
 		if (price != null && price.length >= 1)
 			stringQuery += ",{\"bool\" : { \"should\":[" + priceStringQuery(price) + "]}}";
-		//end query
+		// end query
 		stringQuery += "]}}";
 		// Gộp các filter lại
 		System.out.println(stringQuery);
 		Query totalStringQuery = new StringQuery(stringQuery)
 				.setPageable(PageRequest.of((pageNum - 1) * pageSize, pageSize));
 
-		SearchHits<Laptop> productHits = elasticsearchOperations.search(totalStringQuery, Laptop.class,
+		SearchHits<Laptop> productHits = elasticsearchOperations.search(
+				totalStringQuery, Laptop.class,
 				IndexCoordinates.of(LAPTOP_INDEX));
 
 		// convert to list
@@ -115,10 +114,15 @@ public class LaptopReponsitory {
 
 		return laptops;
 	}
+	
+	
+	
+	
+	
 
 	// get price filter string query
 	private String priceStringQuery(Integer[] price) {
-		
+
 		String query = "";
 		System.out.println(price.length);
 
@@ -128,9 +132,9 @@ public class LaptopReponsitory {
 			if (price[i] == 1)
 				query += "{\"range\":{\"price\":{\"lt\":\"10000000\"}}}" + lastString;
 			else if (price[i] == 2)
-				query += "{\"range\":{\"price\":{\"gte\":\"10000000\",\"lt\":\"20000000\"}}}" + lastString;
+				query +="{\"range\":{\"price\":{\"gte\":\"10000000\",\"lt\":\"20000000\"}}}"+lastString;
 			else if (price[i] == 3)
-				query += "{\"range\":{\"price\":{\"gte\":\"20000000\",\"lt\":\"30000000\"}}}" + lastString;
+				query += "{\"range\":{\"price\":{\"gte\":\"20000000\",\"lt\":\"30000000\"}}}"+lastString;
 			else if (price[i] == 4)
 				query += "{\"range\":{\"price\":{\"gte\":\"30000000\"}}}" + lastString;
 		}
@@ -139,6 +143,8 @@ public class LaptopReponsitory {
 
 	}
 
+
+	
 	// convert Array Of Strings To String
 	private String MyString(String[] arrayString) {
 		StringBuffer sb = new StringBuffer();
@@ -151,7 +157,11 @@ public class LaptopReponsitory {
 
 	// fetchSuggestions: Gợi ý khi gõ tìm kiếm
 	public List<String> fetchSuggestions(String query) {
-		QueryBuilder queryBuilder = QueryBuilders.wildcardQuery("name", "*" + query + "*");
+		QueryBuilder queryBuilder = QueryBuilders
+				// search multi field
+				.multiMatchQuery(query, "category.name", "type", "name", "system")
+				// tìm kiếm mờ
+				.fuzziness(Fuzziness.TWO);
 
 		Query searchQuery = new NativeSearchQueryBuilder().withFilter(queryBuilder).withPageable(PageRequest.of(0, 5))
 				.build();

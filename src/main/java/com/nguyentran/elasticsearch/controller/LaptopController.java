@@ -78,7 +78,8 @@ public class LaptopController {
 
 	// search
 	@PostMapping("/search")
-	public ResponseEntity<?> searchLaptop(@RequestParam(required = true, defaultValue = "1") Integer pageNum,
+	public ResponseEntity<?> searchLaptop(
+			@RequestParam(required = true, defaultValue = "1")Integer pageNum,
 			@RequestParam(required = true, defaultValue = "6") Integer pageSize,
 			@RequestParam(required = false) String query
 
@@ -104,7 +105,8 @@ public class LaptopController {
 
 	// filter
 	@PostMapping("/filter")
-	public ResponseEntity<?> filter(@RequestParam(required = true, defaultValue = "1") Integer pageNum,
+	public ResponseEntity<?> filter(
+			@RequestParam(required = true, defaultValue = "1") Integer pageNum,
 			@RequestParam(required = true, defaultValue = "6") Integer pageSize,
 			@RequestParam(required = false) String[] type,
 			@RequestParam(required = false) Integer[] price,
@@ -116,7 +118,8 @@ public class LaptopController {
 		
 		HashMap<String, Object> map = new HashMap<>();
 		try {
-			List<Laptop> listLaptop = laptopService.filter(pageNum, pageSize, type, price, category, screenSize, cpu,
+			List<Laptop> listLaptop = laptopService.filter(pageNum, pageSize, type,
+					price, category, screenSize, cpu,
 					ram,rom);
 			if (listLaptop == null) {
 				map.put("status", true);

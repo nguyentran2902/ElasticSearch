@@ -44,19 +44,16 @@ public class LaptopService {
 
 	// search multi field
 	public List<Laptop> searchLaptop(Integer pageNum, Integer pageSize, String query) {
-
-
 		return laptopReponsitory.searchLaptop(pageNum,pageSize,query);
 	}
 
 	// filter
-	public List<Laptop> filter(Integer pageNum, Integer pageSize, String[] type, Integer[] price, String[] category,
+	public List<Laptop> filter(Integer pageNum, Integer pageSize, String[] type,
+			Integer[] price, String[] category,
 			String[] screenSize, String[] cpu, String[] ram, String[] rom) {
 
-		
-
-		return laptopReponsitory.filter(pageNum, pageSize, type, price, category, screenSize, cpu,
-				ram,rom);
+		return laptopReponsitory.filter(pageNum, pageSize, type, price, category,
+				screenSize, cpu,ram,rom);
 	}
 
 	
